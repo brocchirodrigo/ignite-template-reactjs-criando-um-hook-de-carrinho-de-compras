@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useRef, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { api } from '../services/api';
 import { Product, Stock } from '../types';
@@ -32,6 +32,20 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     return [];
   });
 
+  const prevCartRef = useRef<Product[]>();
+
+  useEffect(() => {
+    prevCartRef.current = cart;
+  });
+
+  const cartPrevValue = prevCartRef.current ?? cart;
+
+  useEffect(() => {
+    if (cartPrevValue !== cart) {
+      localStorage.setItem('@RocketShoes:cart', JSON.stringify(cart));
+    }
+  }, [cart, cartPrevValue])
+
   const addProduct = async (productId: number) => {
     try {
       const updatedCard = [...cart];
@@ -62,7 +76,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
         updatedCard.push(newProduct);
       }
-      localStorage.setItem('@RocketShoes:cart', JSON.stringify(updatedCard));
+      // localStorage.setItem('@RocketShoes:cart', JSON.stringify(updatedCard));
 
       setCart(updatedCard)
     } catch {
@@ -83,7 +97,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       updateCart.splice(productIndex, 1);
 
       setCart(updateCart);
-      localStorage.setItem('@RocketShoes:cart', JSON.stringify(updateCart));
+      // localStorage.setItem('@RocketShoes:cart', JSON.stringify(updateCart));
     } catch {
       toast.error('Erro na remoção do produto');
     }
@@ -114,7 +128,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       if (productExists) {
         productExists.amount = amount;
         setCart(updateCart);
-        localStorage.setItem('@RocketShoes:cart', JSON.stringify(updateCart));
+        // localStorage.setItem('@RocketShoes:cart', JSON.stringify(updateCart));
       } else {
         throw Error('Erro na alteração de quantidade do produto')
       }
