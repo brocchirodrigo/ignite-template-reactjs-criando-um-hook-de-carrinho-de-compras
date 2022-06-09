@@ -61,8 +61,8 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
         }
 
         updatedCard.push(newProduct);
-        localStorage.setItem('@RocketShoes:cart', JSON.stringify(updatedCard));
       }
+      localStorage.setItem('@RocketShoes:cart', JSON.stringify(updatedCard));
 
       setCart(updatedCard)
     } catch {
